@@ -37,10 +37,6 @@ class DecartProvider(Provider):
     ) -> Coroutine[Any, Any, Generator]:
         """Generate a Decart client"""
         try:
-            print(request.api_key)
-            print(self.API_KEY)
-            print(os.getenv("OPENAI_API_KEY"))
-            print("APIKEYS")
             client = OpenAI(
                 api_key=request.api_key or self.API_KEY,
                 # api_key="decart-api-0590f0c9-7936-4b26-ab25-cca51f1c3a42",
