@@ -3,7 +3,7 @@ import requests
 
 class LLM:
     def __init__(self, model_id: str, **kwargs):
-        self.provider, self.model = model_id.split("/")
+        self.provider, _, self.model = model_id.partition("/")
         self.api_key = kwargs.get("api_key")
         self.api_endpoint = kwargs.get("api_endpoint")
         self.api_version = kwargs.get("api_version")
