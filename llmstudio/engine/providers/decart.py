@@ -39,8 +39,7 @@ class DecartProvider(Provider):
         try:
             client = OpenAI(
                 api_key=request.api_key or self.API_KEY,
-                # api_key="decart-api-0590f0c9-7936-4b26-ab25-cca51f1c3a42",
-                base_url="https://api.decart.ai/v1/",
+                base_url="https://api.decart.ai/v1",
             )
             return await asyncio.to_thread(
                 client.chat.completions.create,
