@@ -1,6 +1,6 @@
 import asyncio
 import json
-from typing import Any, AsyncGenerator, Coroutine, Generator, Optional
+from typing import Any, AsyncGenerator, Coroutine, Generator, Optional, Tuple
 
 import requests
 from fastapi import HTTPException
@@ -61,3 +61,17 @@ class OllamaProvider(Provider):
             if chunk.get("done"):
                 break
             yield chunk["response"]
+
+    def calculate_custom_metrics(
+        self,
+        input: str,
+        output: str,
+        model: str,
+        start_time: float,
+        end_time: float,
+        first_token_time: float,
+        token_times: Tuple[float, ...],
+        token_count: int,
+    ):
+        hello_counter = output.lower().count("hello")
+        return {"hello_counter": hello_counter}

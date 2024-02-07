@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import (
     Any,
     AsyncGenerator,
+    Callable,
     Coroutine,
     Dict,
     Generator,
@@ -114,6 +115,7 @@ class Provider:
             first_token_time,
             token_times,
             token_count,
+            getattr(self, "calculate_custom_metrics", None),
         )
 
         if request.is_stream and request.has_end_token:
@@ -159,6 +161,9 @@ class Provider:
         first_token_time: float,
         token_times: Tuple[float, ...],
         token_count: int,
+        custom_metrics_callback: Optional[
+            Callable[[str, str, str], Dict[str, Any]]
+        ] = None,
     ) -> Dict[str, Any]:
         """Calculates metrics based on token times and output"""
         model_config = self.config.models[model]
@@ -169,7 +174,7 @@ class Provider:
         output_cost = model_config.output_token_cost * output_tokens
 
         total_time = end_time - start_time
-        return {
+        metrics = {
             "input_tokens": input_tokens,
             "output_tokens": output_tokens,
             "total_tokens": input_tokens + output_tokens,
@@ -179,6 +184,21 @@ class Provider:
             "inter_token_latency": sum(token_times) / len(token_times),
             "tokens_per_second": token_count / total_time,
         }
+
+        if custom_metrics_callback:
+            custom_metrics = custom_metrics_callback(
+                input,
+                output,
+                model,
+                start_time,
+                end_time,
+                first_token_time,
+                token_times,
+                token_count,
+            )
+            metrics.update(custom_metrics)
+
+        return metrics
 
     def get_end_token_string(self, metrics: Dict[str, Any]) -> str:
         return f"{self.END_TOKEN},input_tokens={metrics['input_tokens']},output_tokens={metrics['output_tokens']},cost={metrics['cost']},latency={metrics['latency']:.5f},time_to_first_token={metrics['time_to_first_token']:.5f},inter_token_latency={metrics['inter_token_latency']:.5f},tokens_per_second={metrics['tokens_per_second']:.2f}"
