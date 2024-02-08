@@ -17,7 +17,7 @@ keywords = ["ml", "ai", "llm", "llmops", "openai", "langchain", "chatgpt", "llms
 python = "^3.9"
 pydantic = "^2.5.3"
 requests = "^2.31.0"
-fastapi = "^0.108.0"
+fastapi = ">=0.108,<0.110"
 uvicorn = "^0.25.0"
 openai = "^1.6.1"
 tiktoken = "^0.5.2"
